@@ -66,22 +66,16 @@ namespace AdventOfCode2021.Solutions
                 int set = oxy.Count(v => v[i] == '1');
                 int rem = oxy.Count - set;
 
-#if SAMPLE
-                Console.WriteLine($"{set}/{oxy.Count} bits set.");
-#endif
+                Utils.TraceForSample($"{set}/{oxy.Count} bits set.");
 
                 if (set < rem)
                 {
-#if SAMPLE
-                    Console.WriteLine("Removing the 1s.");
-#endif
+                    Utils.TraceForSample("Removing the 1s.");
                     RemoveIf(oxy, i, '1');
                 }
                 else
                 {
-#if SAMPLE
-                    Console.WriteLine("Removing the 0s.");
-#endif
+                    Utils.TraceForSample("Removing the 0s.");
                     RemoveIf(oxy, i, '0');
                 }
             }
@@ -91,28 +85,22 @@ namespace AdventOfCode2021.Solutions
                 int set = co2.Count(v => v[i] == '1');
                 int rem = co2.Count - set;
 
-#if SAMPLE
-                Console.WriteLine($"{set}/{co2.Count} bits set.");
-#endif
+                Utils.TraceForSample($"{set}/{co2.Count} bits set.");
 
                 if (set >= rem)
                 {
-#if SAMPLE
-                    Console.WriteLine("Removing the 1s.");
-#endif
+                    Utils.TraceForSample("Removing the 1s.");
                     RemoveIf(co2, i, '1');
                 }
                 else
                 {
-#if SAMPLE
-                    Console.WriteLine("Removing the 0s.");
-#endif
+                    Utils.TraceForSample("Removing the 0s.");
                     RemoveIf(co2, i, '0');
                 }
             }
 
-            long oxyVal = ParseBinary(oxy.Single());
-            long co2Val = ParseBinary(co2.Single());
+            long oxyVal = Utils.ParseBinary(oxy.Single());
+            long co2Val = Utils.ParseBinary(co2.Single());
 
             Console.WriteLine($"oxy={oxy.Single()}=>{oxyVal},co2={co2.Single()}=>{co2Val},rating={oxyVal*co2Val}");
         }
@@ -126,23 +114,6 @@ namespace AdventOfCode2021.Solutions
                     list.RemoveAt(j);
                 }
             }
-        }
-
-        private static long ParseBinary(string input)
-        {
-            long value = 0;
-
-            foreach (char c in input)
-            {
-                value <<= 1;
-
-                if (c == '1')
-                {
-                    value |= 1;
-                }
-            }
-
-            return value;
         }
     }
 }
