@@ -11,31 +11,17 @@ namespace AdventOfCode2021.Solutions
     {
         internal static void Problem1()
         {
-            (List<int> numbers, List<int[][]> boards, List<bool[][]> called) = Load();
+            (List<int> numbers, List<int[][]> boards) = Load();
 
             foreach (int call in numbers)
             {
-                for (int game = 0; game < boards.Count; game++)
-                {
-                    int[][] board = boards[game];
-
-                    for (int row = 0; row < board.Length; row++)
-                    {
-                        for (int col = 0; col < board[row].Length; col++)
-                        {
-                            if (board[row][col] == call)
-                            {
-                                called[game][row][col] = true;
-                            }
-                        }
-                    }
-                }
+                MarkBoards(boards, call);
 
                 for (int game = 0; game < boards.Count; game++)
                 {
-                    if (CheckWin(boards[game], called[game], game))
+                    if (CheckWin(boards[game], game))
                     {
-                        CalculateScore(boards[game], called[game], call);
+                        CalculateScore(boards[game], call);
                         return;
                     }
                 }
@@ -44,26 +30,12 @@ namespace AdventOfCode2021.Solutions
 
         internal static void Problem2()
         {
-            (List<int> numbers, List<int[][]> boards, List<bool[][]> called) = Load();
+            (List<int> numbers, List<int[][]> boards) = Load();
             HashSet<int> winnable = new HashSet<int>(Enumerable.Range(0, boards.Count));
 
             foreach (int call in numbers)
             {
-                for (int game = 0; game < boards.Count; game++)
-                {
-                    int[][] board = boards[game];
-
-                    for (int row = 0; row < board.Length; row++)
-                    {
-                        for (int col = 0; col < board[row].Length; col++)
-                        {
-                            if (board[row][col] == call)
-                            {
-                                called[game][row][col] = true;
-                            }
-                        }
-                    }
-                }
+                MarkBoards(boards, call);
 
                 for (int game = 0; game < boards.Count; game++)
                 {
@@ -72,13 +44,13 @@ namespace AdventOfCode2021.Solutions
                         continue;
                     }
 
-                    if (CheckWin(boards[game], called[game], game))
+                    if (CheckWin(boards[game], game))
                     {
                         winnable.Remove(game);
 
                         if (winnable.Count == 0)
                         {
-                            CalculateScore(boards[game], called[game], call);
+                            CalculateScore(boards[game], call);
                             return;
                         }
                     }
@@ -86,7 +58,7 @@ namespace AdventOfCode2021.Solutions
             }
         }
 
-        private static (List<int> Numbers, List<int[][]> Boards, List<bool[][]> Called) Load()
+        private static (List<int> Numbers, List<int[][]> Boards) Load()
         {
             List<int> numbers = null;
             List<int[][]> boards = new List<int[][]>();
@@ -123,24 +95,29 @@ namespace AdventOfCode2021.Solutions
                 loadRow++;
             }
 
-            List<bool[][]> called = new List<bool[][]>();
-
-            foreach (int[][] board in boards)
-            {
-                bool[][] calledBoard = new bool[board.Length][];
-
-                for (int i = 0; i < board.Length; i++)
-                {
-                    calledBoard[i] = new bool[board[i].Length];
-                }
-
-                called.Add(calledBoard);
-            }
-
-            return (numbers, boards, called);
+            return (numbers, boards);
         }
 
-        private static void CalculateScore(int[][] board, bool[][] called, int call)
+        private static void MarkBoards(List<int[][]> boards, int call)
+        {
+            for (int game = 0; game < boards.Count; game++)
+            {
+                int[][] board = boards[game];
+
+                for (int row = 0; row < board.Length; row++)
+                {
+                    for (int col = 0; col < board[row].Length; col++)
+                    {
+                        if (board[row][col] == call)
+                        {
+                            board[row][col] *= -1;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void CalculateScore(int[][] board, int call)
         {
             long sum = 0;
 
@@ -148,7 +125,7 @@ namespace AdventOfCode2021.Solutions
             {
                 for (int col = 0; col < board.Length; col++)
                 {
-                    if (!called[row][col])
+                    if (board[row][col] > 0)
                     {
                         sum += board[row][col];
                     }
@@ -159,11 +136,11 @@ namespace AdventOfCode2021.Solutions
             Console.WriteLine($"Answer is {call * sum}");
         }
 
-        private static bool CheckWin(int[][] board, bool[][] called, int game)
+        private static bool CheckWin(int[][] board, int game)
         {
             for (int row = 0; row < board.Length; row++)
             {
-                if (called[row].All(v => v))
+                if (board[row].All(v => v < 0))
                 {
                     Console.WriteLine($"Winner in game {game} by row {row}");
                     return true;
@@ -172,7 +149,7 @@ namespace AdventOfCode2021.Solutions
 
             for (int col = 0; col < board.Length; col++)
             {
-                if (called.All(row => row[col]))
+                if (board.All(row => row[col] < 0))
                 {
                     Console.WriteLine($"Winner in game {game} by col {col}");
                     return true;
