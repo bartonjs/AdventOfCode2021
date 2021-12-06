@@ -5,7 +5,9 @@ namespace AdventOfCode2021
 {
     internal static class Data
     {
+#pragma warning disable 649
         private static string[] s_lines;
+#pragma warning restore 649
 
         internal static IEnumerable<string> Enumerate()
         {
