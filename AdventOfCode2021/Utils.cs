@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace AdventOfCode2021
 {
@@ -26,6 +28,21 @@ namespace AdventOfCode2021
         internal static void TraceForSample(string message)
         {
             Console.WriteLine(message);
+        }
+
+        internal static long Product<T>(this IEnumerable<T> source, Func<T, long> selector)
+        {
+            long product = 1;
+
+            foreach (long val in source.Select(selector))
+            {
+                checked
+                {
+                    product *= val;
+                }
+            }
+
+            return product;
         }
     }
 }
