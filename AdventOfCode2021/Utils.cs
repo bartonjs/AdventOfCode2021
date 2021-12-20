@@ -44,5 +44,15 @@ namespace AdventOfCode2021
 
             return product;
         }
+
+        internal static T SafeIndex<T>(this List<T> list, int index, T defaultValue = default)
+        {
+            if (index < 0 || list is null || index >= list.Count)
+            {
+                return defaultValue;
+            }
+
+            return list[index];
+        }
     }
 }
